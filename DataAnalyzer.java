@@ -5,9 +5,10 @@ public class DataAnalyzer {
     public DataAnalyzer() {
         incomeData = new ArrayList<>();
     }
-    public ArrayList<String> getIncomeData() {
+    public ArrayList<String> findLowIncome() {
         ArrayList<String> lowIncomeList = new ArrayList<>();
         for (String income : incomeData) {
+            // Case-insensitive comparison to catch variations like "Low income"
             if (income.equalsIgnoreCase("Low Income")) {
                 lowIncomeList.add(income);
             }
@@ -22,5 +23,13 @@ public class DataAnalyzer {
             counts.put(normalized, counts.getOrDefault(normalized, 0) + 1);
         }
         return counts;
+    }
+    public static void main(String[] args) {
+        DataAnalyzer analyzer = new DataAnalyzer();
+        analyzer.loadData("incomes.txt");
+        ArrayList<String> lowIncome = analyzer.findLowIncome();
+        System.out.println("Low Income Data: " + lowIncome);
+        HashMap<String, Integer> categoryCounts = analyzer.getCategoryCounts();
+        System.out.println("Category Counts: " + categoryCounts);
     }
 }
