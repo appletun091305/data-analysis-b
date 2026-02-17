@@ -19,7 +19,7 @@ public class DataAnalyzer {
   public static int binarySearch(ArrayList<Integer> numbers, int targetNumber){
     int minIndex = 0;
     int maxIndex = numbers.size()-1;
-    while(minIndex < maxIndex){
+    while(minIndex <= maxIndex){
       int middleIndex = (int) Math.floor((minIndex + maxIndex)/2);
       if (numbers.get(middleIndex).equals(targetNumber)){
         return middleIndex;
@@ -34,6 +34,26 @@ public class DataAnalyzer {
     return -1;
   } 
 
+  public static int linearSearch(ArrayList<Integer> numbers, int targetNumber){
+    int index = 1;
+    while (index < numbers.size()-1){
+      if (numbers.get(index) == targetNumber){
+        return index;
+      }
+      index++;
+    }
+    return -1;
+  }
+
+  public static int reverseList(ArrayList<Integer> numbers, int targetNumber){
+    for (int i = numbers.size() - 1; i >= 0; i--){
+      if (numbers.get(i) == targetNumber){
+        return i;
+      }
+    }
+    return -1;
+  }
+
   public static void main(String[] args) { 
     // DataAnalyzer analyzer = new DataAnalyzer();
     // int result = analyzer.internetfinder();
@@ -43,13 +63,19 @@ public class DataAnalyzer {
 
     // Calculate time
     long startTime = System.nanoTime(); 
-    int result = binarySearch(a, 9); 
+    int resultB = binarySearch(a, 9); 
     long endTime = System.nanoTime(); 
     
     // Display time in nanoseconds and milliseconds 
     long duration = endTime - startTime; 
     System.out.println("Time taken: " + duration + " nanoseconds"); 
     System.out.println("Time taken: " + (duration / 1000000.0) + " milliseconds");
+
+    int resultL = linearSearch(a, 9);
+    int resultR = reverseList(a, 9);
+    System.out.println("Binary Search Result: " + resultB);
+    System.out.println("Linear Search Result: " + resultL);
+    System.out.println("Reverse List Search Result: " + resultR);
 
   }
 }
