@@ -1,6 +1,6 @@
 import java.util.ArrayList;
 public class DataAnalyzer {
-    public ArrayList<Country> getCountryInternet() {
+    public ArrayList<Country> getCountryUnemployment() {
         ArrayList<Country> list = new ArrayList<>();
         list.add(new Country("USA",     92.5, 3.9));
         list.add(new Country("Brazil",  74.3, 11.93));

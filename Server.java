@@ -18,7 +18,7 @@ public class Server {
         HttpServer server = HttpServer.create(new InetSocketAddress(8080), 0);
         System.out.println("Running at http://localhost:8080");
         DataAnalyzer analyzer = new DataAnalyzer();
-        ArrayList<Country> countries = analyzer.getCountryInternet();
+        ArrayList<Country> countries = analyzer.getCountryUnemployment();
         System.out.printf ("Min:         %.2f%%%n",  analyzer.findMin(countries));
         System.out.printf ("Max:         %.2f%%%n",  analyzer.findMax(countries));
 
@@ -50,7 +50,7 @@ public class Server {
 
             // Manually convert ArrayList to JSON array string (no library!)
             DataAnalyzer analyzer2 = new DataAnalyzer();
-            ArrayList<Country> list = analyzer2.getCountryInternet();
+            ArrayList<Country> list = analyzer2.getCountryUnemployment();
             ArrayList<String> jsonItems = new ArrayList<>();
             for (Country c : list) jsonItems.add(c.toString());
             String json = "[" + String.join(",", jsonItems) + "]";
@@ -67,7 +67,7 @@ public class Server {
             exchange.getResponseHeaders().set("Access-Control-Allow-Origin", "*");
             exchange.getResponseHeaders().set("Content-Type", "application/json");
 
-            String json = new DataAnalyzer().statsToJson( new DataAnalyzer().getCountryInternet());
+            String json = new DataAnalyzer().statsToJson( new DataAnalyzer().getCountryUnemployment());
             byte[] response = json.getBytes();
             exchange.sendResponseHeaders(200, response.length);
             exchange.getResponseBody().write(response);
