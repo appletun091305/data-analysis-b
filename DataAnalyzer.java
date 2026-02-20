@@ -54,6 +54,91 @@ public class DataAnalyzer {
     return -1;
   }
 
+  public ArrayList<Country> getInternetUsage() {
+        ArrayList<String> countries = FileOperator.getStringList("countries.txt");
+        ArrayList<Double> percents = FileOperator.getDoubleList("internetpercent.txt");
+
+        ArrayList<Country> countryList = new ArrayList<>();
+
+        for (int i = 0; i < countries.size() && i < percents.size(); i++) {
+            double percent = percents.get(i);
+            if (percent >= 0 && percent <= 100) {
+                countryList.add(new Country(countries.get(i), percent));
+            }
+        }
+        return countryList;
+    }
+       
+    // ── Different team members write these methods ──────────────────
+
+    public double findMin(ArrayList<Country> countries) {
+        double min = countries.get(0).getInternet();
+
+        for (Country c : countries) {
+          if (c.getInternet() < min) {
+            min = c.getInternet();
+          }
+        }
+        return min;
+    }
+    public double findMax(ArrayList<Country> countries) {
+        double max = countries.get(0).getInternet();
+        for (Country c : countries) {
+          if (c.getInternet() > max){
+            max = c.getInternet();
+          }
+        }
+        return max;
+    }    
+    public double findSum(ArrayList<Country> countries) {
+        double sum = 0;
+        for (Country c : countries){
+          sum += c.getInternet();
+        }
+        return sum;
+    }
+    public double findAve(ArrayList<Country> countries) {
+        double sum = 0;
+        for (Country c : countries){
+          sum += c.getInternet();
+        }
+        double avg = sum / countries.size();
+        return avg;
+    }
+     public String findMinCountry(ArrayList<Country> countries) {
+        Country min = countries.get(0);
+        for (Country c : countries) {
+            if (c.getInternet() < min.getInternet()){
+              min = c;
+            } 
+        }
+        return min.getName();
+    }
+     public String findMaxCountry(ArrayList<Country> countries) {
+        Country max = countries.get(0);
+        for (Country c : countries) {
+          if (c.getInternet() > max.getInternet()){
+            max = c;
+          }
+        }
+        return max.getName();
+    }
+    // ────────────────────────────────────────────────────────────────
+
+    public String statsToJson(ArrayList<Country> countries) {
+        double min = findMin(countries);
+        double max = findMax(countries);
+        double avg = findAve(countries);
+        double sum = findSum(countries);
+        String minCountry = findMinCountry(countries);
+        String maxCountry = findMaxCountry(countries);
+
+        return String.format(
+                "{\"count\":%d,\"min\":%.1f,\"max\":%.1f,\"avg\":%.1f,\"sum\":%.1f,\"range\":%.1f,\"minCountry\":\"%s\",\"maxCountry\":\"%s\"}",
+                countries.size(), min, max, avg, sum, (max - min), minCountry, maxCountry
+        );
+    }
+
   public static void main(String[] args) { 
     // DataAnalyzer analyzer = new DataAnalyzer();
     // int result = analyzer.internetfinder();
@@ -79,3 +164,11 @@ public class DataAnalyzer {
 
   }
 }
+
+// DataAnalyzer.java
+// import java.util.ArrayList;
+
+// public class DataAnalyzer {
+    
+    
+// }

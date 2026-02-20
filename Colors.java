@@ -61,6 +61,16 @@ public class Colors{
         }
     }
 
+    public static int getPeakIndex(ArrayList<Integer> a) {
+    for (int i = 1; i < a.size() - 1; i++) {
+        if (a.get(i) > a.get(i - 1) && a.get(i) > a.get(i + 1)) {
+            return i;
+        }
+    }
+    
+    return -1;
+}
+
     public static void main (String[] args){
         ArrayList<String> colors = new ArrayList<>();
 
@@ -73,6 +83,14 @@ public class Colors{
 
         swapColors(colors);
 
-        System.out.println(colors);
-    }
+        // System.out.println(colors);
+
+        ArrayList<Integer> numbers = new ArrayList<>();
+        numbers.add(1);
+        numbers.add(3);
+        numbers.add(5);
+        numbers.add(4);
+        numbers.add(2);
+        System.out.println(getPeakIndex(numbers));
+    }   
 }
