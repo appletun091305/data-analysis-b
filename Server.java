@@ -46,7 +46,7 @@ public class Server {
 
             // Manually convert ArrayList to JSON array string (no library!)
             DataAnalyzer analyzer = new DataAnalyzer();
-            String json = String.valueOf(analyzer.getInternetUsage());
+            String json = String.valueOf(analyzer.badinternetfinder());
 
             byte[] response = json.getBytes();
             exchange.sendResponseHeaders(200, response.length);
@@ -60,7 +60,7 @@ public class Server {
             exchange.getResponseHeaders().set("Access-Control-Allow-Origin", "*");
             exchange.getResponseHeaders().set("Content-Type", "application/json");
 
-            String json = new DataAnalyzer().statsToJson(new DataAnalyzer().getInternetUsage());
+            String json = new DataAnalyzer().statsToJson(new DataAnalyzer().badinternetfinder());
             byte[] response = json.getBytes();
             exchange.sendResponseHeaders(200, response.length);
             exchange.getResponseBody().write(response);
