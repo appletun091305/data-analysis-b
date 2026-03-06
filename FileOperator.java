@@ -9,7 +9,7 @@ public class FileOperator {
     /*
     * Creates the File and Scanner to read the specified filename
     */
-    public static void   createFile(String filename){
+public static void   createFile(String filename){
         myFile = new File(filename);
         try {
             fileReader = new Scanner(myFile);
@@ -60,20 +60,17 @@ public class FileOperator {
     /*
     * Returns an ArrayList of words from a file
     */
-    public static ArrayList<String> getWords(String text) {
+public static ArrayList<String> getWords(String filename) {
+        createFile(filename);
 
-        ArrayList<String> tempList = new ArrayList<>();
-        String[] words = text.split(" ");
-        for (String w : words) {
-            tempList.add(w);
+        ArrayList<String> tempList = new ArrayList<String>();
+
+        while (fileReader.hasNext()) {
+        tempList.add(fileReader.next());
         }
 
         fileReader.close();
         return tempList;
     }
-
-
-    public static void main(String[] args) {
-        System.out.println(FileOperator.getStringList("countries.txt"));
-    }
+    
 }
