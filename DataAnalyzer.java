@@ -2,12 +2,12 @@ import java.util.ArrayList;
 public class DataAnalyzer {
     public ArrayList<Country> getCountryUnemployment() {
         ArrayList<Country> list = new ArrayList<>();
-        list.add(new Country("USA",     92.5, 3.9));
-        list.add(new Country("Brazil",  74.3, 11.93));
-        list.add(new Country("India",   43.0, 5.33));
-        list.add(new Country("Germany", 89.7, 3.38));
-        list.add(new Country("Nigeria", 36.1, 8.39));
-        list.add(new Country("Japan",   93.2, 2.4));
+        list.add(new Country("USA",     3.9));
+        list.add(new Country("Brazil",  11.93));
+        list.add(new Country("India",   5.33));
+        list.add(new Country("Germany", 3.38));
+        list.add(new Country("Nigeria", 8.39));
+        list.add(new Country("Japan", 2.4));
         return list;
     }
        // ── Different team members write these methods ──────────────────
@@ -64,6 +64,7 @@ public class DataAnalyzer {
     // ────────────────────────────────────────────────────────────────
 
     public String statsToJson(ArrayList<Country> countries) {
+        ArrayList<Integer> unemploymentRates = FileOperator.getIntList("unemployment.txt");
         double min        = findMin(countries);
         double max        = findMax(countries);
         double avg        = findAve(countries);
