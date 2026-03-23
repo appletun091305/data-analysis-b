@@ -47,7 +47,7 @@ public class Server {
 
             // Manually convert ArrayList to JSON array string (no library!)
             DataAnalyzer analyzer = new DataAnalyzer();
-            String json = analyzer.getCountryInternet().toString();
+            String json = analyzer.findHighIncomeCountries().toString();
 
             byte[] response = json.getBytes();
             exchange.sendResponseHeaders(200, response.length);
