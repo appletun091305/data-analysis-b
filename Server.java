@@ -57,16 +57,16 @@ public class Server {
 
         });
         
-        server.createContext("/stats", exchange -> {
-            exchange.getResponseHeaders().set("Access-Control-Allow-Origin", "*");
-            exchange.getResponseHeaders().set("Content-Type", "application/json");
+        // server.createContext("/stats", exchange -> {
+        //     exchange.getResponseHeaders().set("Access-Control-Allow-Origin", "*");
+        //     exchange.getResponseHeaders().set("Content-Type", "application/json");
 
-            String json = new DataAnalyzer().statsToJson( new DataAnalyzer().getCountryInternet());
-            byte[] response = json.getBytes();
-            exchange.sendResponseHeaders(200, response.length);
-            exchange.getResponseBody().write(response);
-            exchange.getResponseBody().close();
-        });
+        //     String json = new DataAnalyzer().statsToJson( new DataAnalyzer().getCountryInternet());
+        //     byte[] response = json.getBytes();
+        //     exchange.sendResponseHeaders(200, response.length);
+        //     exchange.getResponseBody().write(response);
+        //     exchange.getResponseBody().close();
+        // });
 
 
         server.start();

@@ -20,8 +20,9 @@ public class DataAnalyzer {
         ArrayList<Country> result = new ArrayList<>();
         System.out.println("\nHigh Income Countries");
 
-        for(int i = 0; i < incomes.size(); i++){
-            String inc=incomes.get(i);
+
+        for(int i = 0; i < countries.size(); i++){
+            String inc=incomes.get(i).trim();
             double val=0;
             if(inc.contains("High")){
                 val=90;
@@ -33,10 +34,7 @@ public class DataAnalyzer {
                 val=25;
             }
 
-             if(inc.contains("High")){
-               result.add(new Country(countries.get(i), val));
-                System.out.println(countries.get(i) + ": " + val);
-            }
+              result.add(new Country(countries.get(i),inc,val));
         }
         return result;
     }
@@ -55,16 +53,16 @@ public class DataAnalyzer {
         analyzer.findHighIncomeCountries();
         analyzer.findLowInternetCountries();
     }
-    public ArrayList<Country> getCountryInternet() {
-        ArrayList<Country> list = new ArrayList<>();
-        list.add(new Country("USA",     92.5));
-        list.add(new Country("Brazil",  74.3));
-        list.add(new Country("India",   43.0));
-        list.add(new Country("Germany", 89.7));
-        list.add(new Country("Nigeria", 36.1));
-        list.add(new Country("Japan",   93.2));
-        return list;
-    }
+    // public ArrayList<Country> getCountryInternet() {
+    //     ArrayList<Country> list = new ArrayList<>();
+    //     list.add(new Country("USA",     92.5));
+    //     list.add(new Country("Brazil",  74.3));
+    //     list.add(new Country("India",   43.0));
+    //     list.add(new Country("Germany", 89.7));
+    //     list.add(new Country("Nigeria", 36.1));
+    //     list.add(new Country("Japan",   93.2));
+    //     return list;
+    // }
        // ── Different team members write these methods ──────────────────
 
     public double findMin(ArrayList<Country> countries) {
