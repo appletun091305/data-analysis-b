@@ -12,9 +12,16 @@ const COLORS = [
     'linear-gradient(180deg, #f472b6, #be185d)',
 ];
 
+// Format large numbers: 1,392,730,000 → "1.39B"
+function fmtPop(n) {
+    if (n >= 1e9) return (n / 1e9).toFixed(2) + 'B';
+    if (n >= 1e6) return (n / 1e6).toFixed(2) + 'M';
+    if (n >= 1e3) return (n / 1e3).toFixed(1) + 'K';
+    return n.toLocaleString();
+}
+
 // ========================
 // Fetch data from Java server
-// Falls back to demo data if server not running
 // ========================
 async function loadData() {
     const barDiv = document.getElementById('barChart');
@@ -29,9 +36,13 @@ async function loadData() {
         if (!res.ok) throw new Error('HTTP ' + res.status);
         countries = await res.json();
     } catch (e) {
+        barDiv.innerHTML = `<p class="status error">&#9888; Could not reach Java server &mdash; make sure Server.java is running on port 8080.<br><small>${e.message}</small></p>`;
+        return;
+    }
 
-        barDiv.innerHTML = `<p class="status error">&#9888; Could not reach Java server &mdash; showing demo data</p>`;
-        await new Promise(r => setTimeout(r, 700));
+    if (!countries || countries.length === 0) {
+        barDiv.innerHTML = '<p class="status error">&#9888; Server returned no data.</p>';
+        return;
     }
 
     renderBarChart(countries);
@@ -51,19 +62,19 @@ function renderBarChart(countries) {
     // Gridlines
     let gridHTML = '<div class="gridlines">';
     for (let i = GRID_STEPS; i >= 0; i--) {
-        gridHTML += `<div class="gridline"><span>${i * stepVal}</span></div>`;
+        gridHTML += `<div class="gridline"><span>${fmtPop(i * stepVal)}</span></div>`;
     }
     gridHTML += '</div>';
 
-    // Bars with country name labels
+    // Bars
     let barsHTML = '';
     countries.forEach((c, i) => {
         const pct   = (c.value / chartMax) * 100;
-        const delay = (i * 0.07).toFixed(2);
+        const delay = (i * 0.05).toFixed(2);
         barsHTML += `
       <div class="bar-group">
         <div class="bar"
-          data-value="${c.value}%"
+          data-value="${fmtPop(c.value)}"
           style="height:${pct}%;background:${COLORS[i % COLORS.length]};animation-delay:${delay}s">
         </div>
         <div class="bar-label">${c.name}</div>
@@ -86,21 +97,25 @@ function renderLineChart(countries) {
     const max   = Math.max(...countries.map(c => c.value)) * 1.1;
     const count = countries.length;
 
-    const xs = countries.map((_, i) => PAD + (i / (count - 1)) * (W - PAD * 2));
-    const ys = countries.map(c => H - PAD - (c.value / max) * (H - PAD * 2));
+    const xs = countries.map((_, i) =>
+        count === 1 ? W / 2 : PAD + (i / (count - 1)) * (W - PAD * 2)
+    );
+    const ys = countries.map(c =>
+        H - PAD - (c.value / max) * (H - PAD * 2)
+    );
 
     const pathD = xs.map((x, i) => `${i === 0 ? 'M' : 'L'} ${x} ${ys[i]}`).join(' ');
     const areaD = pathD + ` L ${xs[count - 1]} ${H} L ${xs[0]} ${H} Z`;
 
     const dots = countries.map((c, i) =>
-        `<circle class="dot" cx="${xs[i]}" cy="${ys[i]}" r="5"><title>${c.name}: ${c.value}%</title></circle>`
+        `<circle class="dot" cx="${xs[i]}" cy="${ys[i]}" r="5"><title>${c.name}: ${fmtPop(c.value)}</title></circle>`
     ).join('');
 
     svg.innerHTML = `
     <defs>
       <linearGradient id="areaGrad" x1="0" y1="0" x2="0" y2="1">
-        <stop offset="0%"   stop-color="#ff3f6c"/>
-        <stop offset="100%" stop-color="transparent"/>
+        <stop offset="0%"   stop-color="#ff3f6c" stop-opacity="1"/>
+        <stop offset="100%" stop-color="#ff3f6c" stop-opacity="0"/>
       </linearGradient>
     </defs>
     <path class="area-path" d="${areaD}"/>
@@ -113,23 +128,22 @@ function renderLineChart(countries) {
 // Stats Row
 // ========================
 function renderStats(countries) {
-    const values = countries.map(c => c.value);
-    const sum    = values.reduce((a, b) => a + b, 0);
-    const avg    = (sum / values.length).toFixed(1);
-    const max    = Math.max(...values);
-    const min    = Math.min(...values);
-
-    // Find country names for min and max
+    const values     = countries.map(c => c.value);
+    const sum        = values.reduce((a, b) => a + b, 0);
+    const avg        = sum / values.length;
+    const max        = Math.max(...values);
+    const min        = Math.min(...values);
     const maxCountry = countries.find(c => c.value === max).name;
     const minCountry = countries.find(c => c.value === min).name;
 
     const items = [
-        { label: 'Count',    value: countries.length,          color: '#00ffe0' },
-        { label: 'Lowest',   value: `${min}% (${minCountry})`, color: '#60a5fa' },
-        { label: 'Highest',  value: `${max}% (${maxCountry})`, color: '#ff3f6c' },
-        { label: 'Average',  value: avg + '%',                 color: '#ffe040' },
-        { label: 'Range',    value: (max - min).toFixed(1)+'%',color: '#a78bfa' },
-        { label: 'Sum',      value: sum.toFixed(1) + '%',      color: '#34d399' },
+        { label: 'Countries',   value: countries.length,  color: '#00ffe0' },
+        { label: 'Smallest',    value: minCountry,        color: '#60a5fa' },
+        { label: 'Population',  value: fmtPop(min),       color: '#60a5fa' },
+        { label: 'Largest',     value: maxCountry,        color: '#ff3f6c' },
+        { label: 'Population',  value: fmtPop(max),       color: '#ff3f6c' },
+        { label: 'Average',     value: fmtPop(avg),       color: '#ffe040' },
+        { label: 'Total',       value: fmtPop(sum),       color: '#34d399' },
     ];
 
     document.getElementById('stats').innerHTML = items.map(s => `

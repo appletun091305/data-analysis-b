@@ -1,16 +1,17 @@
 // Country.java
 public class Country {
     private String name;
-    private double unemploymentRate;
+    private long population;
 
-    public Country(String name, double unemploymentRate) {
+    public Country(String name, long population) {
         this.name = name;
-        this.unemploymentRate = unemploymentRate;
+        this.population = population;
     }
 
     public String getName() { return name; }
-    public double getUnemploymentRate() { return unemploymentRate; }
+    public long getPopulation() { return population; }
+
     public String toString() {
-        return "{\"name\":\"" + name + "\",\"value\":" + unemploymentRate + "}";
+        return "{\"name\":\"" + name + "\",\"value\":" + population + "}";
     }
 }

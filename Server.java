@@ -6,7 +6,6 @@ import java.util.ArrayList;
 
 public class Server {
 
-    // Helper method that accepts HttpExchange
     public static void serveFile(HttpExchange res, String filePath, String contentType) throws IOException {
         byte[] bytes = Files.readAllBytes(Path.of(filePath));
         res.getResponseHeaders().set("Content-Type", contentType);
@@ -14,43 +13,27 @@ public class Server {
         res.getResponseBody().write(bytes);
         res.getResponseBody().close();
     }
+
     public static void main(String[] args) throws Exception {
         HttpServer server = HttpServer.create(new InetSocketAddress(8080), 0);
         System.out.println("Running at http://localhost:8080");
+
         DataAnalyzer analyzer = new DataAnalyzer();
-        ArrayList<Country> countries = analyzer.getCountryUnemployment();
-        System.out.printf ("Min:         %.2f%%%n",  analyzer.findMin(countries));
-        System.out.printf ("Max:         %.2f%%%n",  analyzer.findMax(countries));
+        ArrayList<Country> countries = analyzer.getCountryPopulation();
+        System.out.printf("Countries loaded: %d%n",   countries.size());
+        System.out.printf("Smallest: %s (%,d)%n",     analyzer.findMinCountry(countries), analyzer.findMin(countries));
+        System.out.printf("Largest:  %s (%,d)%n",     analyzer.findMaxCountry(countries), analyzer.findMax(countries));
+        System.out.printf("Average:  %,.0f%n",         analyzer.findAve(countries));
 
-        // Then your handlers become clean one-liners:
-        server.createContext("/", new HttpHandler() {
-            public void handle(HttpExchange res) throws IOException {
-                serveFile(res, "index.html", "text/html");
-            }
-        });
+        server.createContext("/",         res -> serveFile(res, "index.html", "text/html"));
+        server.createContext("/style.css", res -> serveFile(res, "style.css", "text/css"));
+        server.createContext("/code.js",   res -> serveFile(res, "code.js",   "application/javascript"));
 
-        server.createContext("/style.css", new HttpHandler() {
-            public void handle(HttpExchange res) throws IOException {
-                serveFile(res, "style.css", "text/css");
-            }
-        });
-
-        server.createContext("/code.js", new HttpHandler() {
-            public void handle(HttpExchange res) throws IOException {
-                serveFile(res, "code.js", "application/javascript");
-            }
-        });
-
-
-        // Serve ArrayList as JSON
         server.createContext("/data", exchange -> {
-            // Add CORS header so browser fetch() works
             exchange.getResponseHeaders().set("Access-Control-Allow-Origin", "*");
             exchange.getResponseHeaders().set("Content-Type", "application/json");
 
-            // Manually convert ArrayList to JSON array string (no library!)
-            DataAnalyzer analyzer2 = new DataAnalyzer();
-            ArrayList<Country> list = analyzer2.getCountryUnemployment();
+            ArrayList<Country> list = new DataAnalyzer().getCountryPopulation();
             ArrayList<String> jsonItems = new ArrayList<>();
             for (Country c : list) jsonItems.add(c.toString());
             String json = "[" + String.join(",", jsonItems) + "]";
@@ -59,23 +42,21 @@ public class Server {
             exchange.sendResponseHeaders(200, response.length);
             exchange.getResponseBody().write(response);
             exchange.getResponseBody().close();
-
-
         });
-        
+
         server.createContext("/stats", exchange -> {
             exchange.getResponseHeaders().set("Access-Control-Allow-Origin", "*");
             exchange.getResponseHeaders().set("Content-Type", "application/json");
 
-            String json = new DataAnalyzer().statsToJson( new DataAnalyzer().getCountryUnemployment());
+            DataAnalyzer a = new DataAnalyzer();
+            String json = a.statsToJson(a.getCountryPopulation());
+
             byte[] response = json.getBytes();
             exchange.sendResponseHeaders(200, response.length);
             exchange.getResponseBody().write(response);
             exchange.getResponseBody().close();
         });
 
-
         server.start();
-
     }
 }

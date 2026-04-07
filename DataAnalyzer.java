@@ -1,80 +1,73 @@
 import java.util.ArrayList;
+
 public class DataAnalyzer {
-    public ArrayList<Country> getCountryUnemployment() {
+
+    public ArrayList<Country> getCountryPopulation() {
+        ArrayList<String> names = FileOperator.getStringList("countries.txt");
+        ArrayList<Integer> pops = FileOperator.getIntList("populations.txt");
+
         ArrayList<Country> list = new ArrayList<>();
-        list.add(new Country("USA",     3.9));
-        list.add(new Country("Brazil",  11.93));
-        list.add(new Country("India",   5.33));
-        list.add(new Country("Germany", 3.38));
-        list.add(new Country("Nigeria", 8.39));
-        list.add(new Country("Japan", 2.4));
+        int limit = Math.min(names.size(), pops.size());
+        for (int i = 0; i < limit; i++) {
+            list.add(new Country(names.get(i).trim(), pops.get(i)));
+        }
         return list;
     }
-       // ── Different team members write these methods ──────────────────
 
-    public double findMin(ArrayList<Country> countries) {
-        double min = countries.get(0).getUnemploymentRate();
-        for (Country c : countries) {
-            if (c.getUnemploymentRate() < min) {
-                min = c.getUnemploymentRate();
-            }
-        }
+    // ── Stat helpers ──────────────────────────────────────────────────────────
+
+    public long findMin(ArrayList<Country> countries) {
+        long min = countries.get(0).getPopulation();
+        for (Country c : countries)
+            if (c.getPopulation() < min) min = c.getPopulation();
         return min;
     }
-    public double findMax(ArrayList<Country> countries) {
-        double max = countries.get(0).getUnemploymentRate();
-        for (Country c : countries) {
-            if (c.getUnemploymentRate() > max) {
-                max = c.getUnemploymentRate();
-            }
-        }
+
+    public long findMax(ArrayList<Country> countries) {
+        long max = countries.get(0).getPopulation();
+        for (Country c : countries)
+            if (c.getPopulation() > max) max = c.getPopulation();
         return max;
     }
-    public double findSum(ArrayList<Country> countries) {
-    double sum = 0.0;
-    for (Country c : countries) {
-        sum += c.getUnemploymentRate();
-    }
-    return sum;
+
+    public long findSum(ArrayList<Country> countries) {
+        long sum = 0;
+        for (Country c : countries) sum += c.getPopulation();
+        return sum;
     }
 
     public double findAve(ArrayList<Country> countries) {
-        return findSum(countries) / countries.size();
+        return (double) findSum(countries) / countries.size();
     }
 
     public String findMinCountry(ArrayList<Country> countries) {
         Country minC = countries.get(0);
-        for (Country c : countries) {
-            if (c.getUnemploymentRate() < minC.getUnemploymentRate()) {
-                minC = c;
-            }
-        }
+        for (Country c : countries)
+            if (c.getPopulation() < minC.getPopulation()) minC = c;
         return minC.getName();
     }
 
     public String findMaxCountry(ArrayList<Country> countries) {
         Country maxC = countries.get(0);
-        for (Country c : countries) {
-            if (c.getUnemploymentRate() > maxC.getUnemploymentRate()) {
-                maxC = c;
-            }
-        }
+        for (Country c : countries)
+            if (c.getPopulation() > maxC.getPopulation()) maxC = c;
         return maxC.getName();
     }
-    // ────────────────────────────────────────────────────────────────
+
+    // ── JSON ──────────────────────────────────────────────────────────────────
 
     public String statsToJson(ArrayList<Country> countries) {
-        ArrayList<Integer> unemploymentRates = FileOperator.getIntList("unemployment.txt");
-        double min        = findMin(countries);
-        double max        = findMax(countries);
+        long   min        = findMin(countries);
+        long   max        = findMax(countries);
         double avg        = findAve(countries);
-        double sum        = findSum(countries);
+        long   sum        = findSum(countries);
         String minCountry = findMinCountry(countries);
         String maxCountry = findMaxCountry(countries);
 
         return String.format(
-                "{\"count\":%d,\"min\":%.1f,\"max\":%.1f,\"avg\":%.1f,\"sum\":%.1f,\"range\":%.1f,\"minCountry\":\"%s\",\"maxCountry\":\"%s\"}",
-                countries.size(), min, max, avg, sum, (max - min), minCountry, maxCountry
+            "{\"count\":%d,\"min\":%d,\"max\":%d,\"avg\":%.0f,\"sum\":%d," +
+            "\"range\":%d,\"minCountry\":\"%s\",\"maxCountry\":\"%s\"}",
+            countries.size(), min, max, avg, sum, (max - min), minCountry, maxCountry
         );
     }
 }
